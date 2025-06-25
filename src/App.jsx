@@ -101,7 +101,7 @@ function App() {
           />
         ) : (
           <>
-            <section className="bg-green-700 text-white py-16 px-4 text-center">
+            <section className="bg-green-700 text-white py-16 px-4 text-center smokey-hero-bg">
               <button
                 className="text-5xl font-bold mb-4 bg-transparent border-none outline-none cursor-pointer hover:underline"
                 style={{ color: 'inherit' }}
@@ -128,7 +128,7 @@ function App() {
                   onSelect={p => { setSelectedProduct(p); setDetailMode(true); }}
                 />
                 <div className="flex justify-center mt-8">
-                  <button className="px-6 py-2 bg-gray-200 text-green-700 rounded-full font-semibold shadow hover:bg-gray-300 transition" onClick={() => setShowStore(false)}>
+                  <button className="px-6 py-2 bg-gray-200 text-green-700 rounded-full font-semibold shadow hover:bg-gray-300 transition mb-8" onClick={() => setShowStore(false)}>
                     Back to Home
                   </button>
                 </div>

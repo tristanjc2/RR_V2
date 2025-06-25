@@ -21,7 +21,7 @@ const products = [
     category: "Flower",
     subcategory: "Sativa",
     description: "Energizing sativa for creativity and focus.",
-    image: "https://images.unsplash.com/photo-1511918984145-48de785d4c4e?auto=format&fit=crop&w=400&q=80",
+    image: "https://images.pexels.com/photos/766773/pexels-photo-766773.jpeg?auto=compress&w=400&q=80", // GreenDream Sativa: cannabis plant
     price: 42.99,
     thc: 19,
     cbd: 2,
@@ -35,7 +35,7 @@ const products = [
     category: "Flower",
     subcategory: "Hybrid",
     description: "Balanced hybrid for a mellow, creative high.",
-    image: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80",
+    image: "https://images.pexels.com/photos/2272941/pexels-photo-2272941.jpeg?auto=compress&w=400&q=80", 
     price: 41.99,
     thc: 20,
     cbd: 1,
@@ -64,7 +64,7 @@ const products = [
     category: "Concentrate",
     subcategory: "Badder",
     description: "Smooth badder with rich terpene profile.",
-    image: "https://images.unsplash.com/photo-1524594154908-eddc8b2b8b99?auto=format&fit=crop&w=400&q=80",
+    image: "https://images.pexels.com/photos/325490/pexels-photo-325490.jpeg?auto=compress&w=400&q=80", // Terpene Badder: creamy concentrate
     price: 59.99,
     thc: 72,
     cbd: 0,
@@ -121,7 +121,7 @@ const products = [
     category: "Edible",
     subcategory: "Drink",
     description: "Refreshing lemonade infused with cannabis extract.",
-    image: "https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80",
+    image: "https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?auto=compress&w=400&q=80", // Infused Lemonade: lemonade
     price: 9.99,
     thc: 10,
     cbd: 0,

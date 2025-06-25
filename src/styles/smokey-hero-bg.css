@@ -1,0 +1,38 @@
+/* Smokey animated gradient background for the hero section */
+.smokey-hero-bg {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, #184e2d 0%, #2e7d4f 40%, #1b1b1b 100%);
+}
+.smokey-hero-bg::before,
+.smokey-hero-bg::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.smokey-hero-bg::before {
+  background: radial-gradient(circle at 20% 40%, rgba(255,255,255,0.12) 0%, rgba(24,78,45,0.1) 60%, transparent 100%),
+              radial-gradient(circle at 80% 60%, rgba(255,255,255,0.10) 0%, rgba(46,125,79,0.08) 60%, transparent 100%);
+  animation: smoke-move 18s linear infinite alternate;
+  opacity: 0.7;
+}
+.smokey-hero-bg::after {
+  background: url('https://www.transparenttextures.com/patterns/smoke.png');
+  opacity: 0.12;
+  mix-blend-mode: lighten;
+  animation: smoke-float 24s ease-in-out infinite alternate;
+}
+@keyframes smoke-move {
+  0% { transform: translateY(0) scale(1.05); }
+  100% { transform: translateY(-30px) scale(1.1); }
+}
+@keyframes smoke-float {
+  0% { background-position: 0 0; }
+  100% { background-position: 200px 80px; }
+}
+.smokey-hero-bg > * {
+  position: relative;
+  z-index: 1;
+}
