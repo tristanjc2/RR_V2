@@ -4,8 +4,8 @@ const Footer = () => (
   <footer className="bg-green-700 text-white py-6 mt-12">
     <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
       <div className="text-center md:text-left w-full md:w-auto mb-4 md:mb-0">
-        <p>&copy; {new Date().getFullYear()} Reaper Resins. All rights reserved.</p>
-        <p className="text-sm mt-2 md:mt-0">This is a fictional demo. Cannabis products are for adults only. Please consume responsibly.</p>
+        <p>© 2025 Reaper Resins. All rights reserved.</p>
+        <p className="text-sm mt-2 md:mt-0">Cannabis products are for adults only. Please consume responsibly.</p>
       </div>
       <div className="flex flex-wrap justify-center md:justify-end gap-6 w-full md:w-auto">
         {/* Telegram */}
