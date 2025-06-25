@@ -64,7 +64,7 @@ export default function ProductDetailPage({ product, reviews, onAddReview, onSav
       {/* Reviews */}
       <div className="border-t border-gray-200 mt-24 pt-12">
         <ReviewSection
-          reviews={reviews}
+          productId={product.id}
           onAdd={onAddReview}
           productList={productList}
           isAdmin={false}

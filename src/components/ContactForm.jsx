@@ -98,29 +98,28 @@ const ContactForm = () => {
           </button>
         </form>
       )}
-      {/* Social/Contact Icons */}
+      {/* Social/Contact Icons (animated, matching footer) */}
       <div className="flex justify-center gap-6 mt-8">
         {/* Telegram */}
-        <a href="https://t.me/yourtelegram" target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="hover:scale-110 transition">
-          <svg width="28" height="28" fill="none" viewBox="0 0 24 24" className="text-green-700" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="12" fill="#fff"/>
-            <path d="M21 4L3.9 10.53c-.7.26-.7.67-.13.83l4.3 1.34 1.65 5.02c.22.67.42.83.87.67l2.1-1.54 4.37 3.23c.8.45 1.37.22 1.57-.74l2.84-13.12c.28-1.18-.45-1.7-1.45-1.18z" fill="#34AADF"/>
-            <path d="M9.03 17.05c.13 0 .24-.05.34-.13l2.1-1.54-2.43-2.22-.01.01-.53 2.47c-.07.34.07.5.32.5z" fill="#C8DAEA"/>
-            <path d="M10.74 15.38l4.18 3.09c.48.34.82.16.93-.45l2.84-13.12c.17-.76-.28-1.09-.92-.85l-13.2 5.36c-.7.26-.7.67-.13.83l4.3 1.34 1.65 5.02c.22.67.42.83.87.67l2.1-1.54z" fill="#A9C9DD"/>
+        <a href="https://t.me/+TzgGpmtVBHY0MGY5" target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="group hover:scale-110 transition p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
+          <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
+            <g>
+              <path className="transition-all duration-300 group-hover:stroke-[#29A8E9] group-hover:scale-110" strokeLinecap="round" strokeLinejoin="round" d="M21.752 6.584a1.5 1.5 0 0 1-.986 1.877l-15 5a1.5 1.5 0 0 1-1.013-2.83l15-5a1.5 1.5 0 0 1 1.999 1.953z" />
+              <path className="transition-all duration-300 group-hover:stroke-[#29A8E9] group-hover:translate-x-1" strokeLinecap="round" strokeLinejoin="round" d="M21.752 6.584l-8.752 8.752m0 0l-3.376-3.376m3.376 3.376l-1.5 4.5" />
+            </g>
           </svg>
         </a>
         {/* Instagram */}
-        <a href="https://instagram.com/yourprofile" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:scale-110 transition">
-          <svg width="28" height="28" fill="none" viewBox="0 0 24 24" className="text-green-700" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="12" fill="#fff"/>
-            <rect x="6.5" y="6.5" width="11" height="11" rx="4" fill="#E1306C"/>
-            <circle cx="12" cy="12" r="3.5" fill="#fff"/>
-            <circle cx="16.5" cy="7.5" r="1" fill="#fff"/>
+        <a href="https://www.instagram.com/reaperresins/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="group hover:scale-110 transition p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
+          <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
+            <rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="currentColor" strokeWidth="1.5" className="transition-all duration-300 group-hover:stroke-pink-500 group-hover:scale-110"/>
+            <circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="1.5" className="transition-all duration-300 group-hover:stroke-yellow-400 group-hover:scale-110"/>
+            <circle cx="17" cy="7" r="1" fill="currentColor" className="transition-all duration-300 group-hover:fill-purple-500 group-hover:scale-125"/>
           </svg>
         </a>
         {/* SMS */}
-        <a href="sms:+1234567890" aria-label="Text Message" className="hover:scale-110 transition">
-          <svg width="28" height="28" fill="none" viewBox="0 0 24 24" className="text-green-700" xmlns="http://www.w3.org/2000/svg">
+        <a href="sms:+12077379594" aria-label="Text Message" className="hover:scale-110 transition p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
+          <svg width="32" height="32" fill="none" viewBox="0 0 24 24" className="text-green-700" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="12" fill="#fff"/>
             <rect x="5" y="7" width="14" height="10" rx="2" fill="#25D366"/>
             <rect x="7" y="9" width="10" height="2" rx="1" fill="#fff"/>
@@ -128,10 +127,10 @@ const ContactForm = () => {
           </svg>
         </a>
         {/* Phone */}
-        <a href="tel:+1234567890" aria-label="Phone" className="hover:scale-110 transition">
-          <svg width="28" height="28" fill="none" viewBox="0 0 24 24" className="text-green-700" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="12" fill="#fff"/>
-            <path d="M17 15.5c-1.38 0-2.74-.28-4.07-.84-1.33-.57-2.57-1.36-3.7-2.37-1.12-1-2.1-2.1-2.93-3.29C5.04 8.51 5 7.92 5.54 7.54l1.45-1.02c.43-.3 1.02-.18 1.3.25l1.13 1.7c.24.36.15.85-.2 1.1l-.7.54c.7.97 1.5 1.86 2.39 2.67.8.74 1.68 1.41 2.62 1.99l.37-.64a.82.82 0 01.98-.37l1.67.65c.48.19.66.77.36 1.19l-1.01 1.45c-.4.57-1.07.7-1.67.55z" fill="#25D366"/>
+        <a href="tel:+12077379594" aria-label="Phone" className="group hover:scale-110 transition p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
+          <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
+            <path d="M15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z" stroke="currentColor" strokeWidth="1.5" className="transition-all duration-300 group-hover:stroke-blue-500 group-hover:scale-110"/>
+            <path d="M20.354 10.646a.5.5 0 0 1-.708-.708l-2.5 2.5a.5.5 0 0 1-.708 0l-2.5-2.5a.5.5 0 0 1 .708-.708L14 13.293l1.646-1.647a.5.5 0 0 1 .708 0z" stroke="currentColor" strokeWidth="1.5" className="transition-all duration-300 group-hover:stroke-blue-500 group-hover:scale-110"/>
           </svg>
         </a>
       </div>

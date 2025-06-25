@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchReviews, addReview, deleteReview } from "../firebaseReviews";
 
-const ReviewSection = ({ isAdmin, productList = [] }) => {
+const ReviewSection = ({ isAdmin, productList = [], reviews: reviewsProp, productId }) => {
   const [form, setForm] = useState({ name: "", rating: 5, text: "", productId: "general" });
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,8 +24,10 @@ const ReviewSection = ({ isAdmin, productList = [] }) => {
       }
       setLoading(false);
     };
-    load();
-  }, []);
+    // If reviews are passed as a prop, don't fetch
+    if (!reviewsProp) load();
+    else setLoading(false);
+  }, [reviewsProp]);
 
   // Auto-rotate carousel every 5 seconds (pause on hover)
   useEffect(() => {
@@ -66,13 +68,22 @@ const ReviewSection = ({ isAdmin, productList = [] }) => {
     }
   };
 
-  const paginatedReviews = reviews.slice(page * REVIEWS_PER_PAGE, (page + 1) * REVIEWS_PER_PAGE);
+  // Use prop reviews if provided, otherwise use fetched
+  let filteredReviews = reviewsProp || reviews;
+  if (productId) {
+    filteredReviews = filteredReviews.filter(r => String(r.productId) === String(productId));
+  }
+  const paginatedReviews = filteredReviews.slice(page * REVIEWS_PER_PAGE, (page + 1) * REVIEWS_PER_PAGE);
   const hasNext = (page + 1) * REVIEWS_PER_PAGE < reviews.length;
   const hasPrev = page > 0;
 
   return (
     <div id="reviews">
       <h3 className="text-2xl font-bold mb-4">Customer Reviews</h3>
+      {/* Only show message if no reviews for this product */}
+      {productId && !filteredReviews.length && !loading && (
+        <div className="text-gray-500 mb-4">No reviews for this product yet.</div>
+      )}
       <button
         className="bg-green-700 text-white px-5 py-3 rounded-lg text-lg hover:bg-green-800 transition mb-6 min-h-[44px]"
         onClick={() => setShowModal(true)}
@@ -211,6 +222,7 @@ const ReviewSection = ({ isAdmin, productList = [] }) => {
       {reviews.length > REVIEWS_PER_PAGE && !hasNext && (
         <button className="mt-4 underline text-green-700 text-lg min-h-[44px]" onClick={() => setPage(0)}>See more reviews</button>
       )}
+
     </div>
   );
 };

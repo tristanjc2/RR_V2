@@ -6,9 +6,13 @@ const ProductCard = ({ product, onSelect, isAdmin, onEdit, onDelete }) => {
   return (
     <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-3 sm:p-4 flex flex-col relative w-full max-w-full">
       <img
-        src={product.image}
-        alt={product.name}
-        className="w-full h-40 sm:h-48 object-cover rounded mb-4"
+        src={
+          product.image && product.image !== "" && product.image !== "placeholder.jpg"
+            ? product.image
+            : "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80"
+        }
+        alt={product.name + (product.image ? '' : ' (placeholder image)')}
+        className="w-full h-40 sm:h-48 object-cover rounded mb-4 bg-gray-100"
         style={{ minHeight: '120px', maxHeight: '220px' }}
       />
       <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
