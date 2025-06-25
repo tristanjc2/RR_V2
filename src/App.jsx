@@ -30,7 +30,7 @@ import NewsletterSignup from "./components/NewsletterSignup";
 import AgeVerificationModal from "./components/AgeVerificationModal";
 import ContactForm from "./components/ContactForm";
 import products from "./data/products";
-import reviews from "./data/reviews";
+// import reviews from "./data/reviews"; // Now using Firestore
 
 function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -49,11 +49,7 @@ function App() {
   });
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
-  // All reviews: { productId: string|number, name, rating, text, date }
-  const [reviewList, setReviewList] = useState(() => {
-    const stored = localStorage.getItem("rr_all_reviews");
-    return stored ? JSON.parse(stored) : [];
-  });
+
   const [showStore, setShowStore] = useState(false);
 
   // Admin actions
@@ -75,28 +71,7 @@ function App() {
     setSelectedProduct(null);
   };
 
-  // Add review (main page or product detail)
-  const handleAddReview = (review) => {
-    const newReview = {
-      ...review,
-      date: new Date().toLocaleDateString(),
-    };
-    const updated = [...reviewList, newReview];
-    setReviewList(updated);
-    localStorage.setItem("rr_all_reviews", JSON.stringify(updated));
-  };
 
-  // Helper to get reviews for a product or general
-  const getReviewsForProduct = (productId) => {
-    if (!productId) return reviewList.filter(r => r.productId === "general");
-    return reviewList.filter(r => String(r.productId) === String(productId));
-  };
-
-  const getGeneralReviews = () => reviewList.filter(r => r.productId === "general");
-
-  const handleDeleteReview = (idx) => {
-    setReviewList(reviewList.filter((_, i) => i !== idx));
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -116,8 +91,6 @@ function App() {
         {detailMode && selectedProduct ? (
           <ProductDetailPage
             product={selectedProduct}
-            reviews={getReviewsForProduct(selectedProduct.id)}
-            onAddReview={review => handleAddReview({ ...review, productId: selectedProduct.id })}
             productList={productList}
             onSave={updatedProduct => {
               handleEditProduct(updatedProduct.id, updatedProduct);
@@ -194,7 +167,7 @@ function App() {
         {showAddProduct && <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"><AdminProductForm onSave={handleAddProduct} onCancel={() => setShowAddProduct(false)} /></div>}
         {!detailMode && (
           <section className="py-12 px-4 bg-white max-w-4xl mx-auto">
-            <ReviewSection reviews={reviewList} isAdmin={isAdmin} onAdd={handleAddReview} onDelete={handleDeleteReview} productList={productList} />
+            <ReviewSection isAdmin={isAdmin} productList={productList} />
           </section>
         )}
         <section className="py-12 px-4 max-w-2xl mx-auto">

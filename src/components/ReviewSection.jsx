@@ -1,16 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { fetchReviews, addReview, deleteReview } from "../firebaseReviews";
 
-const ReviewSection = ({ reviews, isAdmin, onAdd, onDelete, productList = [] }) => {
+const ReviewSection = ({ isAdmin, productList = [] }) => {
   const [form, setForm] = useState({ name: "", rating: 5, text: "", productId: "general" });
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchReviews();
+        setReviews(data);
+      } catch (err) {
+        setError("Failed to load reviews.");
+      }
+      setLoading(false);
+    };
+    load();
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onAdd({ ...form });
-    setForm({ name: "", rating: 5, text: "", productId: "general" });
+    try {
+      await addReview(form);
+      // Reload reviews
+      const data = await fetchReviews();
+      setReviews(data);
+      setForm({ name: "", rating: 5, text: "", productId: "general" });
+    } catch (err) {
+      setError("Failed to submit review.");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteReview(id);
+      setReviews(reviews.filter(r => r.id !== id));
+    } catch (err) {
+      setError("Failed to delete review.");
+    }
   };
 
   return (
@@ -82,13 +116,15 @@ const ReviewSection = ({ reviews, isAdmin, onAdd, onDelete, productList = [] }) 
           Submit Review
         </button>
       </form>
+      {loading && <div>Loading reviews...</div>}
+      {error && <div className="text-red-600">{error}</div>}
       <ul className="space-y-4">
-        {reviews.map((r, i) => {
+        {reviews.map((r) => {
           const productName = r.productId && r.productId !== "general"
             ? (productList.find(p => String(p.id) === String(r.productId))?.name || "[Deleted Product]")
             : null;
           return (
-            <li key={i} className="border rounded p-4 bg-gray-50 relative">
+            <li key={r.id} className="border rounded p-4 bg-gray-50 relative">
               <div className="flex items-center mb-1">
                 <span className="font-semibold mr-2">{r.name}</span>
                 <span className="text-yellow-500">{'\u2605'.repeat(r.rating)}{'\u2606'.repeat(5 - r.rating)}</span>
@@ -99,9 +135,9 @@ const ReviewSection = ({ reviews, isAdmin, onAdd, onDelete, productList = [] }) 
                 )}
               </div>
               <p className="text-gray-700 italic">“{r.text}”</p>
-              <span className="text-xs text-gray-400">{r.date}</span>
+              <span className="text-xs text-gray-400">{new Date(r.date).toLocaleDateString()}</span>
               {isAdmin && (
-                <button className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700" onClick={() => onDelete(i)}>Delete</button>
+                <button className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700" onClick={() => handleDelete(r.id)}>Delete</button>
               )}
             </li>
           );
