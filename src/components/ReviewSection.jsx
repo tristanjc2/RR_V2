@@ -6,7 +6,13 @@ const ReviewSection = ({ isAdmin, productList = [] }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [page, setPage] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const [fade, setFade] = useState(true);
+  const REVIEWS_PER_PAGE = 3;
 
+  // Load reviews once
   useEffect(() => {
     const load = async () => {
       setLoading(true);
@@ -20,6 +26,19 @@ const ReviewSection = ({ isAdmin, productList = [] }) => {
     };
     load();
   }, []);
+
+  // Auto-rotate carousel every 5 seconds (pause on hover)
+  useEffect(() => {
+    if (isHovered) return;
+    const interval = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setPage(prev => (prev + 1) * REVIEWS_PER_PAGE < reviews.length ? prev + 1 : 0);
+        setFade(true);
+      }, 250); // match fade duration
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [reviews.length, isHovered, page]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -47,79 +66,117 @@ const ReviewSection = ({ isAdmin, productList = [] }) => {
     }
   };
 
+  const paginatedReviews = reviews.slice(page * REVIEWS_PER_PAGE, (page + 1) * REVIEWS_PER_PAGE);
+  const hasNext = (page + 1) * REVIEWS_PER_PAGE < reviews.length;
+  const hasPrev = page > 0;
+
   return (
     <div id="reviews">
       <h3 className="text-2xl font-bold mb-4">Customer Reviews</h3>
-      <form onSubmit={handleSubmit} className="mb-6 space-y-3">
-        <select
-          name="productId"
-          value={form.productId}
-          onChange={handleChange}
-          className="border px-3 py-2 rounded w-full"
-        >
-          <option value="general">General Company Review</option>
-          {/* Group products by category and subcategory */}
-          {(() => {
-  const groups = [];
-  const grouped = {};
-  productList.forEach(p => {
-    if (!grouped[p.category]) grouped[p.category] = {};
-    if (!grouped[p.category][p.subcategory]) grouped[p.category][p.subcategory] = [];
-    grouped[p.category][p.subcategory].push(p);
-  });
-  Object.entries(grouped).forEach(([cat, subs]) => {
-    groups.push(
-      <optgroup key={cat} label={cat}>
-        {Object.entries(subs).flatMap(([sub, prods]) =>
-          prods.map(prod => (
-            <option key={prod.id} value={prod.id}>{sub}: {prod.name}</option>
-          ))
-        )}
-      </optgroup>
-    );
-  });
-  return groups;
-})()}
+      <button
+        className="bg-green-700 text-white px-5 py-3 rounded-lg text-lg hover:bg-green-800 transition mb-6 min-h-[44px]"
+        onClick={() => setShowModal(true)}
+      >
+        Want to leave a review?
+      </button>
 
-        </select>
-        <input
-          type="text"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Your name"
-          className="border px-3 py-2 rounded w-full"
-          required
-        />
-        <select
-          name="rating"
-          value={form.rating}
-          onChange={handleChange}
-          className="border px-3 py-2 rounded w-full"
+      {/* Review Form Modal */}
+      {showModal && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+          onClick={() => setShowModal(false)}
         >
-          {[5, 4, 3, 2, 1].map((r) => (
-            <option key={r} value={r}>{r} Star{r > 1 ? 's' : ''}</option>
-          ))}
-        </select>
-        <textarea
-          name="text"
-          value={form.text}
-          onChange={handleChange}
-          placeholder="Write your review..."
-          className="border px-3 py-2 rounded w-full"
-          required
-        />
-        <button
-          type="submit"
-          className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition"
-        >
-          Submit Review
-        </button>
-      </form>
+          <div
+            className="bg-white p-4 sm:p-8 rounded shadow-lg max-w-md w-full relative mx-2"
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-4 right-4 text-3xl font-bold text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-700 transition"
+              style={{ lineHeight: '1', width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', zIndex: 10 }}
+              aria-label="Close Modal"
+              onClick={() => setShowModal(false)}
+            >
+              &times;
+            </button>
+            <h4 className="text-xl font-bold mb-4">Leave a Review</h4>
+            <form onSubmit={handleSubmit} className="space-y-3">
+              {/* Responsive form for mobile */}
+              <select
+                name="productId"
+                value={form.productId}
+                onChange={handleChange}
+                className="border px-3 py-2 rounded w-full"
+              >
+                <option value="general">General Company Review</option>
+                {/* Group products by category and subcategory */}
+                {(() => {
+                  const groups = [];
+                  const grouped = {};
+                  productList.forEach(p => {
+                    if (!grouped[p.category]) grouped[p.category] = {};
+                    if (!grouped[p.category][p.subcategory]) grouped[p.category][p.subcategory] = [];
+                    grouped[p.category][p.subcategory].push(p);
+                  });
+                  Object.entries(grouped).forEach(([cat, subs]) => {
+                    groups.push(
+                      <optgroup key={cat} label={cat}>
+                        {Object.entries(subs).flatMap(([sub, prods]) =>
+                          prods.map(prod => (
+                            <option key={prod.id} value={prod.id}>{sub}: {prod.name}</option>
+                          ))
+                        )}
+                      </optgroup>
+                    );
+                  });
+                  return groups;
+                })()}
+              </select>
+              <input
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Your name"
+                className="border px-3 py-2 rounded w-full"
+                required
+              />
+              <select
+                name="rating"
+                value={form.rating}
+                onChange={handleChange}
+                className="border px-3 py-2 rounded w-full"
+              >
+                {[5, 4, 3, 2, 1].map((r) => (
+                  <option key={r} value={r}>{r} Star{r > 1 ? 's' : ''}</option>
+                ))}
+              </select>
+              <textarea
+                name="text"
+                value={form.text}
+                onChange={handleChange}
+                placeholder="Write your review..."
+                className="border px-3 py-2 rounded w-full"
+                required
+              />
+              <button
+                type="submit"
+                className="bg-green-700 text-white px-5 py-3 rounded-lg text-lg hover:bg-green-800 transition w-full min-h-[44px]"
+              >
+                Submit Review
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
       {loading && <div>Loading reviews...</div>}
       {error && <div className="text-red-600">{error}</div>}
-      <ul className="space-y-4">
-        {reviews.map((r) => {
+      <ul
+        className={`space-y-4 transition-opacity duration-250 ${fade ? 'opacity-100' : 'opacity-0'} px-1 sm:px-0`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {paginatedReviews.map((r) => {
           const productName = r.productId && r.productId !== "general"
             ? (productList.find(p => String(p.id) === String(r.productId))?.name || "[Deleted Product]")
             : null;
@@ -143,6 +200,17 @@ const ReviewSection = ({ isAdmin, productList = [] }) => {
           );
         })}
       </ul>
+      <div className="flex gap-2 mt-4 flex-wrap justify-center">
+        {hasPrev && (
+          <button className="px-5 py-3 text-lg bg-gray-200 rounded-lg min-w-[44px] min-h-[44px]" onClick={() => setPage(page - 1)}>Prev</button>
+        )}
+        {hasNext && (
+          <button className="px-5 py-3 text-lg bg-gray-200 rounded-lg min-w-[44px] min-h-[44px]" onClick={() => setPage(page + 1)}>Next</button>
+        )}
+      </div>
+      {reviews.length > REVIEWS_PER_PAGE && !hasNext && (
+        <button className="mt-4 underline text-green-700 text-lg min-h-[44px]" onClick={() => setPage(0)}>See more reviews</button>
+      )}
     </div>
   );
 };
