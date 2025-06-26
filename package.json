@@ -5,7 +5,7 @@
   "homepage": "https://tristanjc2.github.io/RR_V2",
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d build -r https://github.com/tristanjc2/RR_V2.git",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
