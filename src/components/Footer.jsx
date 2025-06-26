@@ -1,7 +1,7 @@
 import React from "react";
 
 const Footer = () => (
-  <footer className="bg-green-700 text-white py-6 mt-12">
+  <footer className="bg-green-700 text-white py-4 sm:py-6 mt-8 sm:mt-12">
     <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
       <div className="text-center md:text-left w-full md:w-auto mb-4 md:mb-0">
         <p>© {new Date().getFullYear()} Reaper Resins. All rights reserved.</p>
@@ -9,9 +9,9 @@ const Footer = () => (
       </div>
       <div className="hidden md:flex flex-1 justify-center items-center">
         <svg viewBox="0 0 400 80" width="220" height="44" className="h-10 w-auto" style={{ maxWidth: '90vw' }} xmlns="http://www.w3.org/2000/svg" aria-label="TCmedia logo">
-          <polyline points="40,10 10,40 40,70" fill="none" stroke="#00FF00" stroke-width="6"/>
-          <polyline points="360,10 390,40 360,70" fill="none" stroke="#00FF00" stroke-width="6"/>
-          <text x="50%" y="67%" text-anchor="middle" fill="none" stroke="#00FF00" stroke-width="2.5" font-size="48" font-family="Arial Black,Arial,sans-serif">TCmedia</text>
+          <polyline points="40,10 10,40 40,70" fill="none" stroke="#00FF00" strokeWidth="6"/>
+          <polyline points="360,10 390,40 360,70" fill="none" stroke="#00FF00" strokeWidth="6"/>
+          <text x="50%" y="67%" textAnchor="middle" fill="none" stroke="#00FF00" strokeWidth="2.5" fontSize="48" fontFamily="Arial Black,Arial,sans-serif">TCmedia</text>
         </svg>
       </div>
       <div className="flex flex-wrap justify-center md:justify-end gap-6 w-full md:w-auto">
@@ -52,9 +52,9 @@ const Footer = () => (
       {/* Center TCmedia on mobile below left text */}
       <div className="flex md:hidden w-full justify-center my-2">
         <svg viewBox="0 0 400 80" width="180" height="36" className="h-8 w-auto" style={{ maxWidth: '90vw' }} xmlns="http://www.w3.org/2000/svg" aria-label="TCmedia logo">
-          <polyline points="40,10 10,40 40,70" fill="none" stroke="#00FF00" stroke-width="6"/>
-          <polyline points="360,10 390,40 360,70" fill="none" stroke="#00FF00" stroke-width="6"/>
-          <text x="50%" y="67%" text-anchor="middle" fill="none" stroke="#00FF00" stroke-width="2.5" font-size="40" font-family="Arial Black,Arial,sans-serif">TCmedia</text>
+          <polyline points="40,10 10,40 40,70" fill="none" stroke="#00FF00" strokeWidth="6"/>
+          <polyline points="360,10 390,40 360,70" fill="none" stroke="#00FF00" strokeWidth="6"/>
+          <text x="50%" y="67%" textAnchor="middle" fill="none" stroke="#00FF00" strokeWidth="2.5" fontSize="40" fontFamily="Arial Black,Arial,sans-serif">TCmedia</text>
         </svg>
       </div>
     </div>

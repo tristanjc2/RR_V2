@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { fetchReviews, addReview, deleteReview } from "../firebaseReviews";
 
-const ReviewSection = ({ isAdmin, productList = [], reviews: reviewsProp, productId }) => {
-  const [form, setForm] = useState({ name: "", rating: 5, text: "", productId: "general" });
+const ReviewSection = ({ isAdmin, productList = [], reviews: reviewsProp, productId, user }) => {
+  const [form, setForm] = useState({
+    name: user?.displayName || "",
+    rating: 5,
+    text: "",
+    productId: "general",
+    isAnonymous: false,
+    showAvatar: true,
+    loyaltyTier: user?.loyaltyTier || null,
+  });
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -43,17 +51,49 @@ const ReviewSection = ({ isAdmin, productList = [], reviews: reviewsProp, produc
   }, [reviews.length, isHovered, page]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setForm(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Find product name and image for selected productId
+    let productName = "General";
+    let productImage = null;
+    if (form.productId !== "general") {
+      const prod = productList.find(p => String(p.id) === String(form.productId));
+      if (prod) {
+        productName = prod.name;
+        productImage = prod.image || null;
+      }
+    }
+    const reviewData = {
+      ...form,
+      productName,
+      productImage,
+      displayName: form.isAnonymous ? "Anonymous" : (user?.displayName || form.name),
+      avatarUrl: form.showAvatar && user?.photoURL ? user.photoURL : null,
+      userId: user?.uid || null,
+      role: user?.role || "user",
+      loyaltyTier: user?.loyaltyTier || null,
+    };
     try {
-      await addReview(form);
+      await addReview(reviewData);
       // Reload reviews
       const data = await fetchReviews();
       setReviews(data);
-      setForm({ name: "", rating: 5, text: "", productId: "general" });
+      setForm({
+        name: user?.displayName || "",
+        rating: 5,
+        text: "",
+        productId: "general",
+        isAnonymous: false,
+        showAvatar: true,
+        loyaltyTier: user?.loyaltyTier || null,
+      });
     } catch (err) {
       setError("Failed to submit review.");
     }
@@ -169,6 +209,48 @@ const ReviewSection = ({ isAdmin, productList = [], reviews: reviewsProp, produc
                 className="border px-3 py-2 rounded w-full"
                 required
               />
+              <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                <input
+                  type="checkbox"
+                  name="isAnonymous"
+                  checked={form.isAnonymous}
+                  onChange={handleChange}
+                  className="accent-green-700"
+                />
+                Submit as Anonymous
+              </label>
+              {user && (
+                <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                  <input
+                    type="checkbox"
+                    name="showAvatar"
+                    checked={form.showAvatar}
+                    onChange={handleChange}
+                    className="accent-green-700"
+                  />
+                  Show my avatar
+                </label>
+              )}
+              {user?.loyaltyTier && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-medium">Loyalty Tier:</span>
+                  <select
+                    name="loyaltyTier"
+                    value={form.loyaltyTier || ""}
+                    onChange={handleChange}
+                    className="border px-3 py-2 rounded w-full"
+                  >
+                    <option value="top">Top Tier (VIP)</option>
+                    <option value="mid">Mid Tier</option>
+                    <option value="low">Low Tier</option>
+                  </select>
+                </div>
+              )}
+              {user?.role === "admin" || user?.role === "staff" ? (
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-xs px-2 py-1 rounded bg-yellow-200 text-yellow-800 font-semibold">{user.role === "admin" ? "Admin" : "Staff"} Review</span>
+                </div>
+              ) : null}
               <button
                 type="submit"
                 className="bg-green-700 text-white px-5 py-3 rounded-lg text-lg hover:bg-green-800 transition w-full min-h-[44px]"

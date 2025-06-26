@@ -37,16 +37,21 @@ const ContactForm = () => {
         });
         if (response.ok) {
           setSubmitted(true);
+          setErrors({});
         } else {
-          const data = await response.json();
-          setErrors({ form: data.error || 'There was an error submitting the form.' });
+          let data = {};
+          try {
+            data = await response.json();
+          } catch (e) {}
+          setErrors({ form: data.error || 'There was an error submitting the form. Please try again later.' });
         }
       } catch (err) {
-        setErrors({ form: 'There was an error submitting the form.' });
+        setErrors({ form: 'Network error: Unable to submit the form. Please check your connection and try again.' });
       }
     }
   };
 
+  // TODO: Consider using environment variables for secrets (e.g., Formspree API key)
 
   return (
     <div id="contact" className="flex flex-col items-center justify-center text-center">

@@ -1,19 +1,27 @@
 import React, { useState } from "react";
 import AdminProductForm from "./AdminProductForm";
+import { motion } from "framer-motion";
+import useLikedProducts from "../hooks/useLikedProducts";
+import LikeHeartButton from "./LikeHeartButton";
 
 const ProductCard = ({ product, onSelect, isAdmin, onEdit, onDelete }) => {
   const [editing, setEditing] = useState(false);
+  const { isProductLiked, likeProduct, unlikeProduct } = useLikedProducts();
+  const liked = isProductLiked(product.id);
   return (
     <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-3 sm:p-4 flex flex-col relative w-full max-w-full">
+      {/* Like Heart Button */}
+      <LikeHeartButton productId={product.id} className="absolute top-2 right-2 z-20" />
       <img
         src={
           product.image && product.image !== "" && product.image !== "placeholder.jpg"
             ? product.image
-            : "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80"
+            : "/placeholder.jpg"
         }
         alt={product.name + (product.image ? '' : ' (placeholder image)')}
         className="w-full h-40 sm:h-48 object-cover rounded mb-4 bg-gray-100"
         style={{ minHeight: '120px', maxHeight: '220px' }}
+        onError={e => { e.target.onerror = null; e.target.src = '/placeholder.jpg'; }}
       />
       <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
       <p className="text-gray-600 mb-2">{product.description}</p>

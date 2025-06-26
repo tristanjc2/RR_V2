@@ -1,0 +1,5 @@
+react-router-dom
+framer-motion
+react-hook-form
+@hookform/resolvers
+zod
