@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ReviewSection from "./ReviewSection";
+import LikeHeartButton from "./LikeHeartButton";
 
 export default function ProductDetailPage({ product, reviews, onAddReview, onSave, isAdmin, onBack, productList = [] }) {
   const [editDesc, setEditDesc] = useState(product.description || "");
@@ -25,12 +26,22 @@ export default function ProductDetailPage({ product, reviews, onAddReview, onSav
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-12 mb-8">
-      <button className="mb-10 text-green-700 hover:underline" onClick={onBack}>&larr; Back to Store</button>
+    <div className="max-w-3xl mx-auto p-4 sm:p-6 bg-white rounded-lg shadow-lg mt-4 sm:mt-12 mb-8">
+      <button
+        className="mb-6 sm:mb-10 text-green-700 text-sm sm:text-base font-semibold hover:underline flex items-center gap-1"
+        onClick={onBack}
+        aria-label="Back to Store"
+      >
+        <span className="text-lg">&larr;</span> Back
+      </button>
       <div className="flex flex-col md:flex-row gap-12">
         <img src={product.image} alt={product.name} className="w-full md:w-80 h-80 object-cover rounded" />
         <div className="flex-1">
-          <h2 className="text-3xl font-bold mb-4">{product.name}</h2>
+          <div className="flex items-center gap-3 mb-4">
+            <h2 className="text-3xl font-bold">{product.name}</h2>
+            {/* Like Heart Button */}
+            <LikeHeartButton productId={product.id} />
+          </div>
           <div className="mb-6 text-lg text-green-700 font-semibold">${product.price}</div>
           <div className="mb-8">
             {editing ? (

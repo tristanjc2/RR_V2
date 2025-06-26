@@ -15,8 +15,11 @@ Customization Instructions:
 Deploy as a static site (Vercel, Netlify, etc.). No server required.
 */
 
-import React, { useState } from "react";
-import AdminLoginModal from "./components/AdminLoginModal";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { app } from "./firebase";
+import LoginModal from "./components/LoginModal";
 import AdminProductForm from "./components/AdminProductForm";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -30,6 +33,8 @@ import NewsletterSignup from "./components/NewsletterSignup";
 import AgeVerificationModal from "./components/AgeVerificationModal";
 import ContactForm from "./components/ContactForm";
 import products from "./data/products";
+import AppRoutes from "./AppRoutes";
+import NotFound from "./components/NotFound";
 // import reviews from "./data/reviews"; // Now using Firestore
 
 function App() {
@@ -41,7 +46,9 @@ function App() {
   });
   const [showAgeModal, setShowAgeModal] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [userType, setUserType] = useState(null); // 'admin' | 'user' | null
+  const [user, setUser] = useState(null); // Firebase user object
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [productList, setProductList] = useState(() => {
     const stored = localStorage.getItem("rr_products");
@@ -51,6 +58,51 @@ function App() {
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
 
   const [showStore, setShowStore] = useState(false);
+
+  // Login actions
+  const handleLogin = (type, firebaseUser = null) => {
+    setUserType(type);
+    setIsAdmin(type === "admin");
+    setShowLogin(false);
+    if (type === "admin") {
+      setUser(null);
+      console.log("Admin login successful");
+    } else if (firebaseUser) {
+      setUser(firebaseUser);
+      console.log("User login successful", firebaseUser);
+    }
+  };
+
+  const handleLogout = async () => {
+    setUserType(null);
+    setIsAdmin(false);
+    setUser(null);
+    const auth = getAuth(app);
+    try {
+      await signOut(auth);
+      console.log("Logged out successfully");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
+
+  useEffect(() => {
+    const auth = getAuth(app);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        setUserType("user");
+        setIsAdmin(false);
+        console.log("User is signed in", firebaseUser);
+      } else {
+        setUser(null);
+        setUserType(null);
+        setIsAdmin(false);
+        console.log("No user signed in");
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Admin actions
   const handleAddProduct = (product) => {
@@ -73,14 +125,18 @@ function App() {
 
 
 
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 px-2 sm:px-0">
       <AgeVerificationModal open={showAgeModal} setOpen={setShowAgeModal} />
-      <AdminLoginModal open={showAdminLogin} onLogin={() => { setIsAdmin(true); setShowAdminLogin(false); }} onClose={() => setShowAdminLogin(false)} />
+      <LoginModal open={showLogin} onLogin={handleLogin} onClose={() => setShowLogin(false)} />
       <Header
         isAdmin={isAdmin}
-        onAdminLogin={() => setShowAdminLogin(true)}
-        onAdminLogout={() => setIsAdmin(false)}
+        user={user}
+        onLogin={() => setShowLogin(true)}
+        onLogout={handleLogout}
         onHomeClick={() => {
           setDetailMode(false);
           setSelectedProduct(null);
@@ -88,94 +144,26 @@ function App() {
         }}
       />
       <main className="flex-1">
-        {detailMode && selectedProduct ? (
-          <ProductDetailPage
-            product={selectedProduct}
-            productList={productList}
-            onSave={updatedProduct => {
-              handleEditProduct(updatedProduct.id, updatedProduct);
-              setSelectedProduct({ ...selectedProduct, ...updatedProduct });
-            }}
-            isAdmin={isAdmin}
-            onBack={() => { setDetailMode(false); setSelectedProduct(null); }}
-          />
-        ) : (
-          <>
-            <section className="bg-green-700 text-white py-16 px-4 text-center smokey-hero-bg">
-              <button
-                className="text-5xl font-bold mb-4 bg-transparent border-none outline-none cursor-pointer hover:underline"
-                style={{ color: 'inherit' }}
-                onClick={() => setShowStore(false)}
-              >
-                Reaper Resins
-              </button>
-              <p className="text-xl mb-6">Elevate your senses. Discover premium cannabis products for a modern lifestyle.</p>
-              <button
-                className="inline-block bg-white text-green-700 px-6 py-3 rounded-full font-semibold shadow hover:bg-green-100 transition"
-                onClick={() => setShowStore(true)}
-              >
-                Shop Now
-              </button>
-            </section>
-            {showStore ? (
-              <>
-                <StorePage
-                  products={productList}
-                  isAdmin={isAdmin}
-                  onAdd={handleAddProduct}
-                  onEdit={handleEditProduct}
-                  onDelete={handleDeleteProduct}
-                  onSelect={p => { setSelectedProduct(p); setDetailMode(true); }}
-                />
-                <div className="flex justify-center mt-8">
-                  <button className="px-6 py-2 bg-gray-200 text-green-700 rounded-full font-semibold shadow hover:bg-gray-300 transition mb-8" onClick={() => setShowStore(false)}>
-                    Back to Home
-                  </button>
-                </div>
-              </>
-            ) : (
-              <section id="products" className="py-12 px-4 max-w-6xl mx-auto">
-                <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
-                  <h2 className="text-3xl font-bold text-center">Our Products</h2>
-                  {isAdmin && <button className="bg-green-700 text-white px-4 py-2 rounded ml-4" onClick={() => setShowAddProduct(true)}>Add Product</button>}
-                </div>
-                <CategorySelector
-                  selectedCategory={selectedCategory}
-                  selectedSubcategory={selectedSubcategory}
-                  onCategorySelect={(cat) => {
-                    setSelectedCategory(cat);
-                    setSelectedSubcategory("");
-                  }}
-                  onSubcategorySelect={setSelectedSubcategory}
-                />
-                <ProductList
-                  products={productList.filter(p => {
-                    if (!selectedCategory) return true;
-                    if (!selectedSubcategory) return p.category === selectedCategory;
-                    return p.category === selectedCategory && p.subcategory === selectedSubcategory;
-                  })}
-                  onSelect={p => { setSelectedProduct(p); setDetailMode(true); }}
-                  isAdmin={isAdmin}
-                  onEdit={handleEditProduct}
-                  onDelete={handleDeleteProduct}
-                />
-              </section>
-            )}
-          </>
-        )}
-
-        {showAddProduct && <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"><AdminProductForm onSave={handleAddProduct} onCancel={() => setShowAddProduct(false)} /></div>}
-        {!detailMode && (
-          <section className="py-12 px-4 bg-white max-w-4xl mx-auto">
-            <ReviewSection isAdmin={isAdmin} productList={productList} />
-          </section>
-        )}
-        <section className="py-12 px-4 max-w-2xl mx-auto">
-          <NewsletterSignup />
-        </section>
-        <section className="py-12 px-4 bg-gray-100 max-w-2xl mx-auto">
-          <ContactForm />
-        </section>
+        <AppRoutes
+          user={user}
+          detailMode={detailMode}
+          selectedProduct={selectedProduct}
+          productList={productList}
+          isAdmin={isAdmin}
+          handleEditProduct={handleEditProduct}
+          setDetailMode={setDetailMode}
+          setSelectedProduct={setSelectedProduct}
+          showStore={showStore}
+          setShowStore={setShowStore}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          selectedSubcategory={selectedSubcategory}
+          setSelectedSubcategory={setSelectedSubcategory}
+          handleAddProduct={handleAddProduct}
+          handleDeleteProduct={handleDeleteProduct}
+          showAddProduct={showAddProduct}
+          setShowAddProduct={setShowAddProduct}
+        />
       </main>
       <Footer />
     </div>

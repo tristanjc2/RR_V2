@@ -35,7 +35,7 @@ export default function StorePage({
   const visibleCategories = selectedCategory ? [selectedCategory] : Object.keys(CATEGORY_CONFIG);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6 sm:py-12">
       <h1 className="text-4xl font-extrabold mb-12 text-center tracking-tight drop-shadow-lg">Reaper Resins Store</h1>
       {/* Category Selector */}
       <div className="flex flex-wrap gap-4 justify-center mb-10 sticky top-0 z-20 bg-opacity-80 backdrop-blur rounded-xl py-4">
